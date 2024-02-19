@@ -12,7 +12,7 @@ export const searchSpotify = async (
     const typeParam = types.join(",");
 
     const response = await fetch(
-      `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(query)}&type=${typeParam}`,
+      `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(query)}&type=${typeParam}&limit=5`,
       {
         headers: {
           Authorization: `Bearer ${accessToken}`,
