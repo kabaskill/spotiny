@@ -3,7 +3,8 @@ import useSWR from "swr";
 
 import { Inter } from "next/font/google";
 import { useSession } from "next-auth/react";
-import LinkItemCardList from "@/components/LinkItemCardList";
+
+import SearchResults from "@/components/SearchResults";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -33,16 +34,18 @@ export default function Home() {
         name="SpotifySearch"
         placeholder="Search on Spotify"
         value={searchQuery}
-        onChange={(e) => setSearchQuery(e.target.value)}
+        onChange={(e) => {
+          setSearchQuery(e.target.value);
+          console.log(searchResults);
+        }}
       />
 
       {error && <div> ERROR </div>}
 
       {searchResults && !isLoading && (
         <>
-          <LinkItemCardList items={searchResults.artists.items} listTitle="Artists" />
-          <LinkItemCardList items={searchResults.albums.items} listTitle="Albums" />
-          <LinkItemCardList items={searchResults.playlists.items} listTitle="Playlists" />
+          <SearchResults data={searchResults} />
+
         </>
       )}
     </main>
