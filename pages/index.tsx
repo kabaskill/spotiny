@@ -1,9 +1,7 @@
 import { useState } from "react";
 import useSWR from "swr";
-
 import { Inter } from "next/font/google";
 import { useSession } from "next-auth/react";
-
 import SearchResults from "@/components/SearchResults";
 
 const inter = Inter({ subsets: ["latin"] });

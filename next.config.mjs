@@ -13,6 +13,7 @@ const nextConfig = {
         hostname: "**.spotifycdn.com",
       },
     ],
+    domains: ["s3.amazonaws.com"],
   },
 };
 
