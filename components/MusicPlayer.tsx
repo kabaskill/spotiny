@@ -1,89 +1,51 @@
 import Image from "next/image";
 import { useState } from "react";
+import { dummy } from "@/lib/dummydata";
 
-const MusicPlayer = () => {
-  // Placeholder states, replace with your actual states
-  const [currentSong, setCurrentSong] = useState({
-    title: "hehleleh",
-    artist: "ehuehfudshdsg",
-    albumArt:
-      "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/quincy-larson-album-art.jpg",
+interface SongType {
+  id: string;
+  title: string;
+  artist: string;
+  duration: string;
+  src: string;
+}
+
+const audio = new Audio();
+export default function MusicPlayer() {
+
+  const [currentSong, setCurrentSong] = useState<SongType>({
+    id: "",
+    title: "",
+    artist: "",
+    duration: "",
+    src: "",
   });
 
-  const [playlist, setPlaylist] = useState([ {
-    id: 0,
-    title: "Scratching The Surface",
-    artist: "Quincy Larson",
-    duration: "4:25",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/scratching-the-surface.mp3",
-  },
-  {
-    id: 1,
-    title: "Can't Stay Down",
-    artist: "Quincy Larson",
-    duration: "4:15",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/cant-stay-down.mp3",
-  },
-  {
-    id: 2,
-    title: "Still Learning",
-    artist: "Quincy Larson",
-    duration: "3:51",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/still-learning.mp3",
-  },
-  {
-    id: 3,
-    title: "Cruising for a Musing",
-    artist: "Quincy Larson",
-    duration: "3:34",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/cruising-for-a-musing.mp3",
-  },
-  {
-    id: 4,
-    title: "Never Not Favored",
-    artist: "Quincy Larson",
-    duration: "3:35",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/never-not-favored.mp3",
-  },
-  {
-    id: 5,
-    title: "From the Ground Up",
-    artist: "Quincy Larson",
-    duration: "3:12",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/from-the-ground-up.mp3",
-  },
-  {
-    id: 6,
-    title: "Walking on Air",
-    artist: "Quincy Larson",
-    duration: "3:25",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/walking-on-air.mp3",
-  },
-  {
-    id: 7,
-    title: "Can't Stop Me. Can't Even Slow Me Down.",
-    artist: "Quincy Larson",
-    duration: "3:52",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/cant-stop-me-cant-even-slow-me-down.mp3",
-  },
-  {
-    id: 8,
-    title: "The Surest Way Out is Through",
-    artist: "Quincy Larson",
-    duration: "3:10",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/the-surest-way-out-is-through.mp3",
-  },
-  {
-    id: 9,
-    title: "Chasing That Feeling",
-    artist: "Quincy Larson",
-    duration: "2:43",
-    src: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/chasing-that-feeling.mp3",
-  },]);
+  const [playlist, setPlaylist] = useState<SongType[]>(dummy);
 
-  // Placeholder functions, replace with your actual functions
-  const playPauseHandler = () => {
-    // Add your play/pause logic here
+  const [userData, setUserData] = useState({
+    songs: [...playlist],
+    currentSong: currentSong,
+    songCurrentTime: 0,
+  });
+
+  const playPauseHandler = (id: string) => {
+    const song: SongType | undefined = userData.songs.find((song: SongType) => song.id === id);
+
+    if (song) {
+      audio.src = song.src;
+      audio.title = song.title;
+    }
+
+    if ( userData?.currentSong?.id !== song?.id) {
+      audio.currentTime = 0;
+    } else {
+      audio.currentTime = userData?.songCurrentTime;
+    }
+
+    
+
+
   };
 
   const prevSongHandler = () => {
@@ -94,33 +56,42 @@ const MusicPlayer = () => {
     // Add your next song logic here
   };
 
+  const playSong = (str: number) => {};
+  const deleteSong = (str: number) => {};
+
   return (
-    <div className="container">
-      <div className="player">
+    <div className="mt-10 flex flex-col justify-center items-center gap-1">
+      <div className="max-w-[450px] bg-background h-[250px] p-2 flex flex-col items-center gap-2 ">
         {/* Player Bar */}
-        <div className="player-bar">
-          <div className="parallel-lines">
-            <div></div>
-            <div></div>
+        <div className="flex justify-center items-center p-1 w-full h-6 bg-foreground">
+          <div className=" flex flex-wrap px-2 gap-y-1">
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
           </div>
-          <h1 className="fcc-title">freeCodeCamp</h1>
-          <div className="parallel-lines">
-            <div></div>
-            <div></div>
+          <h1 className="text-secondary mx-10">SpoLittle</h1>
+          <div className=" flex flex-wrap px-2 gap-y-1">
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
           </div>
         </div>
 
         {/* Player Content */}
-        <div className="player-content">
-          <div id="player-album-art">
-            <Image src={currentSong.albumArt} alt="song cover art" width={100} height={100}/>
+        <div className="flex bg-foreground w-[430px] h-[200px] gap-x-4 items-center justify-center ">
+          <div className="bg-secondary border-2 border-background">
+            <Image
+              className="block w-[150px]"
+              src={currentSong.albumArt}
+              alt="song cover art"
+              width={100}
+              height={100}
+            />
           </div>
-          <div className="player-display">
-            <div className="player-display-song-artist">
-              <p id="player-song-title">{currentSong.title}</p>
-              <p id="player-song-artist">{currentSong.artist}</p>
+          <div className="flex flex-col gap-y-5 p-4 bg-background w-[226px] h-[153px]">
+            <div className="h-[80px]">
+              <p className="m-0 text-lg">{currentSong.title}</p>
+              <p className="m-0 text-xs text-highlight">{currentSong.artist}</p>
             </div>
-            <div className="player-buttons">
+            <div className="flex justify-around">
               <button
                 id="previous"
                 className="previous"
@@ -128,6 +99,7 @@ const MusicPlayer = () => {
                 onClick={prevSongHandler}
               >
                 <svg
+                  className="fill-primary"
                   width="24"
                   height="19"
                   viewBox="0 0 24 19"
@@ -140,6 +112,7 @@ const MusicPlayer = () => {
               </button>
               <button id="play" className="play" aria-label="Play" onClick={playPauseHandler}>
                 <svg
+                  className="fill-primary"
                   width="17"
                   height="19"
                   viewBox="0 0 17 19"
@@ -151,6 +124,7 @@ const MusicPlayer = () => {
               </button>
               <button id="pause" className="pause" aria-label="Pause" onClick={playPauseHandler}>
                 <svg
+                  className="fill-primary"
                   width="17"
                   height="19"
                   viewBox="0 0 17 19"
@@ -163,6 +137,7 @@ const MusicPlayer = () => {
               </button>
               <button id="next" className="next" aria-label="Next" onClick={nextSongHandler}>
                 <svg
+                  className="fill-primary"
                   width="24"
                   height="19"
                   viewBox="0 0 24 19"
@@ -175,6 +150,7 @@ const MusicPlayer = () => {
               </button>
               <button id="shuffle" className="shuffle" aria-label="Shuffle">
                 <svg
+                  className="fill-primary"
                   width="17"
                   height="14"
                   viewBox="0 0 17 14"
@@ -194,29 +170,59 @@ const MusicPlayer = () => {
       </div>
 
       {/* Playlist */}
-      <div className="playlist">
-        <div className="playlist-bar">
-          <div className="parallel-lines">
-            <div></div>
-            <div></div>
+      <div className="max-w-[450px] bg-background h-auto p-2 flex flex-col items-center gap-y-2 ">
+        <div className="flex justify-between items-center py-2 w-full h-[30px] bg-foreground">
+          <div className=" flex flex-wrap px-2 gap-y-1">
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
           </div>
-          <h2 className="playlist-title" id="playlist">
+          <h2 className="text-secondary mx-10" id="playlist">
             Playlist
           </h2>
-          <div className="parallel-lines">
-            <div></div>
-            <div></div>
+          <div className=" flex flex-wrap px-2 gap-y-1">
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
+            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
           </div>
         </div>
-        <ul id="playlist-songs">
-          {/* Render playlist songs dynamically */}
+        <ul className="w-[430px] h-full bg-foreground flex flex-col gap-y-2 p-2 visible justify-start list-none">
           {playlist.map((song) => (
-            <li key={song.id}>{`${song.title} - ${song.artist}`}</li>
+            <li
+              key={song.id}
+              className=" outline-highlight flex h-[40px] justify-between items-center p-1"
+            >
+              <button
+                className="h-full flex flex-row items-center justify-around gap-x-2"
+                onClick={playSong(song.id)}
+              >
+                <span className="w-[240px] text-left text-sm/4">{song.title}</span>
+                <span className="w-[80px] m-0 text-xs/4 text-highlight">{song.artist}</span>
+                <span className=" text-xs m-auto w-[30px]">{song.duration}</span>
+              </button>
+              <button
+                onClick={deleteSong(song.id)}
+                className="playlist-song-delete"
+                aria-label="Delete ${song.title}"
+              >
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle cx="8" cy="8" r="8" fill="#4d4d62" />
+                  <path
+                    fillRule="evenodd"
+                    clipRule="evenodd"
+                    d="M5.32587 5.18571C5.7107 4.90301 6.28333 4.94814 6.60485 5.28651L8 6.75478L9.39515 5.28651C9.71667 4.94814 10.2893 4.90301 10.6741 5.18571C11.059 5.4684 11.1103 5.97188 10.7888 6.31026L9.1832 7.99999L10.7888 9.68974C11.1103 10.0281 11.059 10.5316 10.6741 10.8143C10.2893 11.097 9.71667 11.0519 9.39515 10.7135L8 9.24521L6.60485 10.7135C6.28333 11.0519 5.7107 11.097 5.32587 10.8143C4.94102 10.5316 4.88969 10.0281 5.21121 9.68974L6.8168 7.99999L5.21122 6.31026C4.8897 5.97188 4.94102 5.4684 5.32587 5.18571Z"
+                    fill="white"
+                  />
+                </svg>
+              </button>
+            </li>
           ))}
         </ul>
       </div>
     </div>
   );
-};
-
-export default MusicPlayer;
+}
