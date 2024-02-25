@@ -12,8 +12,11 @@ const nextConfig = {
         protocol: "https",
         hostname: "**.spotifycdn.com",
       },
+      {
+        protocol: "https",
+        hostname: "s3.amazonaws.com",
+      },
     ],
-    domains: ["s3.amazonaws.com"],
   },
 };
 

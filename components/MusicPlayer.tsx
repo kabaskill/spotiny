@@ -1,63 +1,154 @@
 import Image from "next/image";
-import { useState } from "react";
-import { dummy } from "@/lib/dummydata";
+import { useState, useEffect } from "react";
+import { formatMsToMin } from "@/lib/formatMstoMin";
 
-interface SongType {
-  id: string;
-  title: string;
-  artist: string;
-  duration: string;
-  src: string;
+interface UserData {
+  songs: SpotifyApi.TrackObjectFull[];
+  currentSong?: SpotifyApi.TrackObjectFull | undefined;
+  songCurrentTime?: number;
 }
 
-const audio = new Audio();
-export default function MusicPlayer() {
+export default function MusicPlayer({ data }:any) {
+  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
-  const [currentSong, setCurrentSong] = useState<SongType>({
-    id: "",
-    title: "",
-    artist: "",
-    duration: "",
-    src: "",
-  });
+  useEffect(() => {
+    if (typeof window !== "undefined") {
+      const newAudio = new Audio();
+      newAudio.preload = "auto";
+      newAudio.autoplay = false;
+      setAudio(newAudio);
 
-  const [playlist, setPlaylist] = useState<SongType[]>(dummy);
+      return () => {
+        newAudio.pause();
+      };
+    }
+  }, []);
 
-  const [userData, setUserData] = useState({
+  const [playlist, setPlaylist] = useState<SpotifyApi.TrackObjectFull[]>([
+    {
+      album: {
+        album_type: "album",
+        artists: [
+          {
+            external_urls: {
+              spotify: "https://open.spotify.com/artist/1dfeR4HaWDbWqFHLkxsg1d",
+            },
+            href: "https://api.spotify.com/v1/artists/1dfeR4HaWDbWqFHLkxsg1d",
+            id: "1dfeR4HaWDbWqFHLkxsg1d",
+            name: "TEST",
+            type: "artist",
+            uri: "spotify:artist:1dfeR4HaWDbWqFHLkxsg1d",
+          },
+        ],
+        available_markets: ["CA", "US"],
+        external_urls: {
+          spotify: "https://open.spotify.com/album/6wPXUmYJ9mOWrKlLzZ5cCa",
+        },
+        href: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/scratching-the-surface.mp3",
+        id: "TEST1111",
+        images: [
+          {
+            height: 640,
+            url: "https://i.scdn.co/image/ab67616d0000b27307744e2ed983efa3e6620a47",
+            width: 640,
+          },
+          {
+            height: 300,
+            url: "https://i.scdn.co/image/ab67616d00001e0207744e2ed983efa3e6620a47",
+            width: 300,
+          },
+          {
+            height: 64,
+            url: "https://i.scdn.co/image/ab67616d0000485107744e2ed983efa3e6620a47",
+            width: 64,
+          },
+        ],
+        name: "The Game (Deluxe Remastered Version)",
+        release_date: "1980-06-27",
+        release_date_precision: "day",
+        total_tracks: 15,
+        type: "album",
+        uri: "spotify:album:6wPXUmYJ9mOWrKlLzZ5cCa",
+      },
+      artists: [
+        {
+          external_urls: {
+            spotify: "https://open.spotify.com/artist/1dfeR4HaWDbWqFHLkxsg1d",
+          },
+          href: "https://api.spotify.com/v1/artists/1dfeR4HaWDbWqFHLkxsg1d",
+          id: "1dfeR4HaWDbWqFHLkxsg1d",
+          name: "TEST",
+          type: "artist",
+          uri: "spotify:artist:1dfeR4HaWDbWqFHLkxsg1d",
+        },
+      ],
+      available_markets: ["CA", "US"],
+      disc_number: 1,
+      duration_ms: 214653,
+      explicit: false,
+      external_ids: {
+        isrc: "GBUM71029605",
+      },
+      external_urls: {
+        spotify: "https://open.spotify.com/track/57JVGBtBLCfHw2muk5416J",
+      },
+      href: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/scratching-the-surface.mp3",
+      id: "TESTTTTTT11111",
+      is_local: false,
+      name: "TEST",
+      popularity: 77,
+      preview_url: null,
+      track_number: 3,
+      type: "track",
+      uri: "spotify:track:57JVGBtBLCfHw2muk5416J",
+    },
+    ...data,
+  ]);
+
+  const [userData, setUserData] = useState<UserData>({
     songs: [...playlist],
-    currentSong: currentSong,
-    songCurrentTime: 0,
   });
 
   const playPauseHandler = (id: string) => {
-    const song: SongType | undefined = userData.songs.find((song: SongType) => song.id === id);
-
-    if (song) {
-      audio.src = song.src;
-      audio.title = song.title;
+    const song: SpotifyApi.TrackObjectFull | undefined = userData.songs.find(
+      (s) => s.id === id
+    );
+  
+    if (!song || !audio) {
+      return;
     }
-
-    if ( userData?.currentSong?.id !== song?.id) {
-      audio.currentTime = 0;
-    } else {
-      audio.currentTime = userData?.songCurrentTime;
+  
+    // Pause and reset audio before setting the new source
+    audio.pause();
+    audio.currentTime = 0;
+    audio.src = song.href;
+    audio.load();
+  
+    // Set audio title
+    audio.title = song.name;
+  
+    // If the current song is different, or if there is no current song, set the current song
+    if (!userData.currentSong || userData.currentSong.id !== song.id) {
+      setUserData({ ...userData, currentSong: song });
     }
-
-    
-
-
+  
+    // Play the audio if it's paused
+    if (audio.paused) {
+      audio.play()
+        .then(() => {
+          console.log('Audio playback started successfully');
+        })
+        .catch((error) => {
+          console.error('Error starting audio playback:', error);
+        });
+    }
   };
 
-  const prevSongHandler = () => {
-    // Add your previous song logic here
-  };
+  const prevSongHandler = () => {};
 
-  const nextSongHandler = () => {
-    // Add your next song logic here
-  };
+  const nextSongHandler = () => {};
 
-  const playSong = (str: number) => {};
-  const deleteSong = (str: number) => {};
+  const deleteSong = (str: string) => {};
 
   return (
     <div className="mt-10 flex flex-col justify-center items-center gap-1">
@@ -80,7 +171,10 @@ export default function MusicPlayer() {
           <div className="bg-secondary border-2 border-background">
             <Image
               className="block w-[150px]"
-              src={currentSong.albumArt}
+              src={
+                userData.currentSong?.album.images[0].url ||
+                "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/quincy-larson-album-art.jpg"
+              }
               alt="song cover art"
               width={100}
               height={100}
@@ -88,8 +182,8 @@ export default function MusicPlayer() {
           </div>
           <div className="flex flex-col gap-y-5 p-4 bg-background w-[226px] h-[153px]">
             <div className="h-[80px]">
-              <p className="m-0 text-lg">{currentSong.title}</p>
-              <p className="m-0 text-xs text-highlight">{currentSong.artist}</p>
+              <p className="m-0 text-lg ">{userData.currentSong?.name}</p>
+              <p className="m-0 text-xs text-highlight">{userData.currentSong?.artists[0].name}</p>
             </div>
             <div className="flex justify-around">
               <button
@@ -110,7 +204,12 @@ export default function MusicPlayer() {
                   <rect width="4.63633" height="18.5453" transform="matrix(-1 0 0 1 4.63633 0)" />
                 </svg>
               </button>
-              <button id="play" className="play" aria-label="Play" onClick={playPauseHandler}>
+              <button
+                id="play"
+                className="play"
+                aria-label="Play"
+                onClick={() => playPauseHandler(userData.currentSong?.id || "")}
+              >
                 <svg
                   className="fill-primary"
                   width="17"
@@ -122,7 +221,12 @@ export default function MusicPlayer() {
                   <path d="M0 0L16.1852 9.5L1.88952e-07 19L0 0Z" />
                 </svg>
               </button>
-              <button id="pause" className="pause" aria-label="Pause" onClick={playPauseHandler}>
+              <button
+                id="pause"
+                className="pause"
+                aria-label="Pause"
+                // onClick={() => playPauseHandler(userData.currentSong?.id || "")}
+              >
                 <svg
                   className="fill-primary"
                   width="17"
@@ -192,14 +296,16 @@ export default function MusicPlayer() {
             >
               <button
                 className="h-full flex flex-row items-center justify-around gap-x-2"
-                onClick={playSong(song.id)}
+                onClick={() => playPauseHandler(song.id || "")}
               >
-                <span className="w-[240px] text-left text-sm/4">{song.title}</span>
-                <span className="w-[80px] m-0 text-xs/4 text-highlight">{song.artist}</span>
-                <span className=" text-xs m-auto w-[30px]">{song.duration}</span>
+                <span className="w-[240px] text-left text-sm/4">{song.name}</span>
+                <span className="w-[80px] m-0 text-xs/4 text-highlight">
+                  {song.artists[0].name}
+                </span>
+                <span className=" text-xs m-auto w-[30px]">{formatMsToMin(song.duration_ms)}</span>
               </button>
               <button
-                onClick={deleteSong(song.id)}
+                onClick={() => deleteSong(song.id || "")}
                 className="playlist-song-delete"
                 aria-label="Delete ${song.title}"
               >

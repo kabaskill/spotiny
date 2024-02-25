@@ -1,21 +1,31 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import useSWR from "swr";
 import { Inter } from "next/font/google";
 import { useSession } from "next-auth/react";
 import SearchResults from "@/components/SearchResults";
+import  MusicPlayer  from "@/components/MusicPlayer";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
+  const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
 
   const {
     data: searchResults,
     isLoading,
     error,
-  } = useSWR(searchQuery.length > 2 ? `/api/search?query=${searchQuery}` : null);
+  } = useSWR(debouncedQuery.length > 2 ? `/api/search?query=${debouncedQuery}` : null);
 
   const session = useSession();
+
+  useEffect(() => {
+    const delayTimer = setTimeout(() => {
+      setDebouncedQuery(searchQuery);
+    }, 300); 
+
+    return () => clearTimeout(delayTimer); 
+  }, [searchQuery]);
 
   return (
     <main
@@ -34,7 +44,6 @@ export default function Home() {
         value={searchQuery}
         onChange={(e) => {
           setSearchQuery(e.target.value);
-          console.log(searchResults);
         }}
       />
 
@@ -42,8 +51,8 @@ export default function Home() {
 
       {searchResults && !isLoading && (
         <>
+          <MusicPlayer data={[]} />
           <SearchResults data={searchResults} />
-
         </>
       )}
     </main>

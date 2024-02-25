@@ -15,12 +15,12 @@ export default function SearchResults({ data }: SearchResultsProps) {
     <>
       <TrackList<SpotifyApi.TrackObjectFull> listTitle="Tracks" dataKey={data.tracks} />
 
-      <CardList<SpotifyApi.ArtistObjectFull> listTitle="Artist" dataKey={data.artists} />
+      {/* <CardList<SpotifyApi.ArtistObjectFull> listTitle="Artist" dataKey={data.artists} />
       <CardList<SpotifyApi.AlbumObjectSimplified> listTitle="Albums" dataKey={data.albums} />
       <CardList<SpotifyApi.PlaylistObjectSimplified>
         listTitle="Playlists"
         dataKey={data.playlists}
-      />
+      /> */}
     </>
   );
 }

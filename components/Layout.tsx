@@ -11,7 +11,7 @@ export default function Layout({ children }: LayoutProps) {
 
   return (
     <>
-      <header className="flex justify-between px-4 py-4">
+      <header className="flex justify-around px-4 py-4">
         <h1>SpoLite</h1>
         <Login />
       </header>
