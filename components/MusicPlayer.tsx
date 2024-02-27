@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { formatMsToMin } from "@/lib/formatMsToMin";
+import { formatMsToMin } from "@/utils/formatMsToMin";
 
 interface UserData {
   songs: SpotifyApi.TrackObjectFull[];
