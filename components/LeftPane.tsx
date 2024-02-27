@@ -4,9 +4,12 @@ function handleClick(string: string) {
   console.log(string);
 }
 
-export default function Navbar() {
+export default function LeftPane() {
   return (
-    <nav className="h-full flex flex-col justify-between">
+    <nav className="bg-background sticky top-0 left-0 min-w-full flex flex-col justify-between py-8">
+      <header className=" flex justify-start ">
+        <h1>spAMPify</h1>
+      </header>
       <ul className="flex flex-col justify-around">
         <li>
           <button onClick={() => handleClick("B1")} className="bg-gray-500" type="button">

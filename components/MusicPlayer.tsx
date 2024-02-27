@@ -152,41 +152,36 @@ export default function MusicPlayer({ data }: any) {
   const deleteSong = (str: string) => {};
 
   return (
-    <div className=" flex flex-col justify-start items-center gap-1">
-      <div className="w-full bg-background h-[250px] p-2 flex flex-col items-center gap-2 ">      {/*  max-w-[450px]*/}
+    <div className=" h-full flex flex-col gap-1 ">
+      <div className=" h-1/4 bg-background p-2 flex flex-col items-center gap-2 ">
         {/* Player Bar */}
-        <div className="flex justify-center items-center p-1 w-full h-6 bg-foreground">
-          <div className=" flex flex-wrap px-2 gap-y-1">
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-          </div>
+        <div className="flex justify-center items-center w-full  bg-background">
+          <div className="h-[8px] w-[40%]  bg-highlight"></div>
+
           <h2 className="text-secondary mx-10">SpoLittle</h2>
-          <div className=" flex flex-wrap px-2 gap-y-1">
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-          </div>
+
+          <div className="h-[8px] w-[40%] bg-highlight"></div>
         </div>
 
         {/* Player Content */}
-        <div className="flex bg-foreground w-full h-[200px] gap-x-4 items-center justify-center ">  {/*  w-[430px]*/}
-          <div className="bg-secondary border-2 border-background">
+        <div className="flex bg-foreground w-full  items-center  ">
+          <div className="bg-secondary border-2 border-background w-1/4">
             <Image
-              className="block w-[150px]"
               src={
                 userData.currentSong?.album.images[0].url ||
                 "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/quincy-larson-album-art.jpg"
               }
               alt="song cover art"
-              width={100}
-              height={100}
+              width={512}
+              height={512}
             />
           </div>
-          <div className="flex flex-col gap-y-5 p-4 bg-background w-[226px] h-[153px]">
+          <div className="flex flex-col gap-5 p-4 bg-background w-3/4 ">
             <div className="h-[80px]">
               <p className="m-0 text-lg ">{userData.currentSong?.name}</p>
               <p className="m-0 text-xs text-highlight">{userData.currentSong?.artists[0].name}</p>
             </div>
-            <div className="flex justify-around">
+            <div className="flex justify-between">
               <button
                 id="previous"
                 className="previous bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
@@ -284,35 +279,24 @@ export default function MusicPlayer({ data }: any) {
       </div>
 
       {/* Playlist */}
-      <div className=" bg-background p-2 flex flex-col items-center gap-2 ">
-        <div className="flex justify-between items-center py-2 w-full h-[30px] bg-foreground">
-          <div className=" flex flex-wrap px-2 gap-1">
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-          </div>
-          <h2 className="text-secondary mx-10" id="playlist">
-            Playlist
-          </h2>
-          <div className=" flex flex-wrap px-2 gap-y-1">
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-            <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
-          </div>
+      <div className=" h-3/4 bg-background p-2  flex flex-col items-center gap-2 ">
+        <div className="flex justify-between items-center w-full bg-background">
+          <div className="h-[8px] w-[40%]  bg-highlight"></div>
+
+          <h2 className="text-secondary mx-10">Playlist</h2>
+
+          <div className="h-[8px] w-[40%]  bg-highlight"></div>
         </div>
-        <ul className=" h-full bg-foreground flex flex-col gap-y-2 p-2 visible justify-start list-none">
+        <ul className="  h-full overflow-auto bg-foreground flex flex-col w-full justify-start list-none  ">
           {playlist.map((song) => (
-            <li
-              key={song.id}
-              className=" outline-highlight flex h-[40px] justify-between items-center p-1"
-            >
+            <li key={song.id} className=" outline-highlight flex  justify-between items-center p-1">
               <button
-                className="h-full flex flex-row items-center justify-around gap-x-2 focus:bg-slate-700"
+                className="w-full h-full flex items-center justify-between gap-2 focus:bg-slate-800"
                 onClick={() => playHandler(song.id || "")}
               >
-                <span className="w-[240px] text-left text-sm/4">{song.name}</span>
-                <span className="w-[80px] m-0 text-xs/4 text-highlight">
-                  {song.artists[0].name}
-                </span>
-                <span className=" text-xs m-auto w-[30px]">{formatMsToMin(song.duration_ms)}</span>
+                <span className="text-sm/4">{song.name}</span>
+                <span className="text-xs/4 text-highlight text-left">{song.artists[0].name}</span>
+                <span className="text-xs ">{formatMsToMin(song.duration_ms)}</span>
               </button>
               <button
                 onClick={() => deleteSong(song.id || "")}

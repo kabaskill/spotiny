@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { useSession } from "next-auth/react";
 import SearchResults from "@/components/SearchResults";
 import MusicPlayer from "@/components/MusicPlayer";
+import LeftPane from "@/components/LeftPane";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -29,32 +30,41 @@ export default function Home() {
 
   return (
     <>
-      <main className={`bg-red-300 flex flex-col items-center justify-start pt-8 px-24 ${inter.className}`}>
-        {session.status === "authenticated" && (
-          <pre className="max-w-[600px]">
-            <code>{JSON.stringify(session, null, 2)}</code>
-          </pre>
-        )}
+      <div className=" h-screen grid grid-cols-[10%_60%_30%] relative">
+        <LeftPane />
 
-        <input
-          type="text"
-          className=" w-3/4 bg-slate-500"
-          name="SpotifySearch"
-          placeholder="Search on Spotify"
-          value={searchQuery}
-          onChange={(e) => {
-            setSearchQuery(e.target.value);
-          }}
-        />
+        <main className={`pt-8 px-8 ${inter.className} bg-appbackground overflow-auto w-full sticky  flex flex-col items-center`}>
+          {session.status === "authenticated" && (
+            <pre className="max-w-[600px]">
+              <code>{JSON.stringify(session, null, 2)}</code>
+            </pre>
+          )}
 
-        {error && <div> ERROR </div>}
+          <input
+            type="text"
+            className=" w-1/2 bg-slate-500"
+            name="SpotifySearch"
+            placeholder="Search on Spotify"
+            value={searchQuery}
+            onChange={(e) => {
+              setSearchQuery(e.target.value);
+            }}
+          />
 
-        {searchResults && !isLoading && <SearchResults data={searchResults} />}
-      </main>
+          {error && <div> ERROR </div>}
 
-      <aside className="h-screen">
-        {searchResults && !isLoading && <MusicPlayer data={searchResults.tracks.items} />}
-      </aside>
+          {searchResults && !isLoading && (
+            <>
+              <SearchResults data={searchResults} />
+
+            </>
+          )}
+        </main>
+
+        <aside className="overflow-auto sticky">
+           <MusicPlayer data={searchResults ?  searchResults.tracks.items : []} />
+        </aside>
+      </div>
     </>
   );
 }
