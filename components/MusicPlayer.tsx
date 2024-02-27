@@ -1,6 +1,6 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
-import { formatMsToMin } from "@/lib/formatMstoMin";
+import { formatMsToMin } from "@/lib/formatMsToMin";
 
 interface UserData {
   songs: SpotifyApi.TrackObjectFull[];
@@ -8,14 +8,12 @@ interface UserData {
   songCurrentTime?: number;
 }
 
-export default function MusicPlayer({ data }:any) {
+export default function MusicPlayer({ data }: any) {
   const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
 
   useEffect(() => {
     if (typeof window !== "undefined") {
       const newAudio = new Audio();
-      newAudio.preload = "auto";
-      newAudio.autoplay = false;
       setAudio(newAudio);
 
       return () => {
@@ -109,39 +107,42 @@ export default function MusicPlayer({ data }:any) {
     songs: [...playlist],
   });
 
-  const playPauseHandler = (id: string) => {
-    const song: SpotifyApi.TrackObjectFull | undefined = userData.songs.find(
-      (s) => s.id === id
-    );
-  
+  const playHandler = (id: string) => {
+    const song: SpotifyApi.TrackObjectFull | void = userData.songs.find((s) => s.id === id);
+
     if (!song || !audio) {
       return;
     }
-  
+
     // Pause and reset audio before setting the new source
     audio.pause();
     audio.currentTime = 0;
     audio.src = song.href;
     audio.load();
-  
+
     // Set audio title
     audio.title = song.name;
-  
+
     // If the current song is different, or if there is no current song, set the current song
     if (!userData.currentSong || userData.currentSong.id !== song.id) {
       setUserData({ ...userData, currentSong: song });
     }
-  
+
     // Play the audio if it's paused
     if (audio.paused) {
-      audio.play()
+      audio
+        .play()
         .then(() => {
-          console.log('Audio playback started successfully');
+          console.log("Audio playback started successfully");
         })
         .catch((error) => {
-          console.error('Error starting audio playback:', error);
+          console.error("Error starting audio playback:", error);
         });
     }
+  };
+
+  const pauseHandler = () => {
+    audio?.pause;
   };
 
   const prevSongHandler = () => {};
@@ -151,15 +152,15 @@ export default function MusicPlayer({ data }:any) {
   const deleteSong = (str: string) => {};
 
   return (
-    <div className="mt-10 flex flex-col justify-center items-center gap-1">
-      <div className="max-w-[450px] bg-background h-[250px] p-2 flex flex-col items-center gap-2 ">
+    <div className=" flex flex-col justify-start items-center gap-1">
+      <div className="w-full bg-background h-[250px] p-2 flex flex-col items-center gap-2 ">      {/*  max-w-[450px]*/}
         {/* Player Bar */}
         <div className="flex justify-center items-center p-1 w-full h-6 bg-foreground">
           <div className=" flex flex-wrap px-2 gap-y-1">
             <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
             <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
           </div>
-          <h1 className="text-secondary mx-10">SpoLittle</h1>
+          <h2 className="text-secondary mx-10">SpoLittle</h2>
           <div className=" flex flex-wrap px-2 gap-y-1">
             <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
             <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
@@ -167,7 +168,7 @@ export default function MusicPlayer({ data }:any) {
         </div>
 
         {/* Player Content */}
-        <div className="flex bg-foreground w-[430px] h-[200px] gap-x-4 items-center justify-center ">
+        <div className="flex bg-foreground w-full h-[200px] gap-x-4 items-center justify-center ">  {/*  w-[430px]*/}
           <div className="bg-secondary border-2 border-background">
             <Image
               className="block w-[150px]"
@@ -188,7 +189,7 @@ export default function MusicPlayer({ data }:any) {
             <div className="flex justify-around">
               <button
                 id="previous"
-                className="previous"
+                className="previous bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
                 aria-label="Previous"
                 onClick={prevSongHandler}
               >
@@ -206,9 +207,9 @@ export default function MusicPlayer({ data }:any) {
               </button>
               <button
                 id="play"
-                className="play"
+                className="play bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
                 aria-label="Play"
-                onClick={() => playPauseHandler(userData.currentSong?.id || "")}
+                onClick={() => playHandler(userData.currentSong?.id || "")}
               >
                 <svg
                   className="fill-primary"
@@ -225,7 +226,7 @@ export default function MusicPlayer({ data }:any) {
                 id="pause"
                 className="pause"
                 aria-label="Pause"
-                // onClick={() => playPauseHandler(userData.currentSong?.id || "")}
+                onClick={() => pauseHandler()}
               >
                 <svg
                   className="fill-primary"
@@ -239,7 +240,12 @@ export default function MusicPlayer({ data }:any) {
                   <path d="M11.4 0H16.15V19H11.4V0Z" />
                 </svg>
               </button>
-              <button id="next" className="next" aria-label="Next" onClick={nextSongHandler}>
+              <button
+                id="next"
+                className="next bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
+                aria-label="Next"
+                onClick={nextSongHandler}
+              >
                 <svg
                   className="fill-primary"
                   width="24"
@@ -252,7 +258,11 @@ export default function MusicPlayer({ data }:any) {
                   <rect x="18.5885" width="4.63633" height="18.5453" />
                 </svg>
               </button>
-              <button id="shuffle" className="shuffle" aria-label="Shuffle">
+              <button
+                id="shuffle"
+                className="shuffle bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
+                aria-label="Shuffle"
+              >
                 <svg
                   className="fill-primary"
                   width="17"
@@ -274,9 +284,9 @@ export default function MusicPlayer({ data }:any) {
       </div>
 
       {/* Playlist */}
-      <div className="max-w-[450px] bg-background h-auto p-2 flex flex-col items-center gap-y-2 ">
+      <div className=" bg-background p-2 flex flex-col items-center gap-2 ">
         <div className="flex justify-between items-center py-2 w-full h-[30px] bg-foreground">
-          <div className=" flex flex-wrap px-2 gap-y-1">
+          <div className=" flex flex-wrap px-2 gap-1">
             <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
             <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
           </div>
@@ -288,15 +298,15 @@ export default function MusicPlayer({ data }:any) {
             <div className="h-[2px] w-full min-w-[75px] bg-highlight"></div>
           </div>
         </div>
-        <ul className="w-[430px] h-full bg-foreground flex flex-col gap-y-2 p-2 visible justify-start list-none">
+        <ul className=" h-full bg-foreground flex flex-col gap-y-2 p-2 visible justify-start list-none">
           {playlist.map((song) => (
             <li
               key={song.id}
               className=" outline-highlight flex h-[40px] justify-between items-center p-1"
             >
               <button
-                className="h-full flex flex-row items-center justify-around gap-x-2"
-                onClick={() => playPauseHandler(song.id || "")}
+                className="h-full flex flex-row items-center justify-around gap-x-2 focus:bg-slate-700"
+                onClick={() => playHandler(song.id || "")}
               >
                 <span className="w-[240px] text-left text-sm/4">{song.name}</span>
                 <span className="w-[80px] m-0 text-xs/4 text-highlight">

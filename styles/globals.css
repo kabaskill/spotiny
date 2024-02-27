@@ -30,10 +30,11 @@ body {
   background-color: var(--app-background-color);
   color: var(--primary-color);
   font-family: var(--font-family);
+
 }
 
 h1 {
-  font-size: 1.125rem;
+  font-size: 2rem;
   line-height: 1.6;
 }
 
@@ -48,6 +49,12 @@ ul {
 a {
   color: inherit;
   text-decoration: none;
+}
+
+.page-wrapper {
+  display: grid;
+  grid-template-columns: 1fr 3fr 1fr;
+
 }
 
 .fade-in {
@@ -74,24 +81,8 @@ a {
   fill: var(--highlight-color);
 }
 
-button {
-  background: transparent;
-  border: none;
-  color: var(--primary-color);
-  cursor: pointer;
-  font-size: var(--root-font-size);
-  outline-color: var(--highlight-color);
-  text-align: center;
-}
-
 .playlist li:not(:last-child) {
   border-bottom: 1px solid var(--background-color);
-}
-
-button:focus,
-.playlist-song:focus {
-  outline-style: dashed;
-  outline-width: 2px;
 }
 
 /* Playlist */
@@ -103,7 +94,6 @@ button:focus,
 [aria-current="true"] p {
   color: var(--highlight-color);
 }
-
 
 .playlist-song-delete {
   padding: 0;
@@ -120,4 +110,3 @@ button:focus,
 .playlist-song-delete:focus circle {
   fill: #ff0000;
 }
-

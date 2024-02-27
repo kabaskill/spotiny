@@ -1,43 +1,24 @@
 import { ReactNode } from "react";
-import Login from "@/components/Login";
+import Navbar from "./Navbar";
+
 interface LayoutProps {
   children: ReactNode;
 }
 
 export default function Layout({ children }: LayoutProps) {
-  function handleClick(string: string) {
-    console.log(string);
-  }
-
   return (
     <>
-      <header className="flex justify-around px-4 py-4">
+      
+      <header className="bg-slate-900 flex py-2 px-4 justify-start ">
         <h1>SpoLite</h1>
-        <Login />
       </header>
+      
+      <div className="page-wrapper">
+        <Navbar />
+        {children}
 
-      <nav>
-        <ul className="flex justify-around">
-          <li>
-            <button onClick={() => handleClick("B1")} className="bg-gray-500" type="button">
-              Button 1
-            </button>
-          </li>
+      </div>
 
-          <li>
-            <button onClick={() => handleClick("B2")} className="bg-gray-500" type="button">
-              Button 2
-            </button>
-          </li>
-
-          <li>
-            <button onClick={() => handleClick("B3")} className="bg-gray-500" type="button">
-              Button 3
-            </button>
-          </li>
-        </ul>
-      </nav>
-      {children}
     </>
   );
 }

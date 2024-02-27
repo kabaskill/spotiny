@@ -5,20 +5,20 @@ export default function Component() {
 
   if (session.status === "authenticated") {
     return (
-      <>
-        Signed in as {session.data?.user?.email} <br />
-        <button className="borde-2 border-sky-500" onClick={() => signOut()}>
+      <div className="flex flex-col">
+        <p>Signed in as {session.data?.user?.email}</p>
+        <button className="border-2 border-sky-500" onClick={() => signOut()}>
           Sign out
         </button>
-      </>
+      </div>
     );
   }
   return (
-    <>
-      Not signed in <br />
-      <button className="borde-2 border-sky-500" onClick={() => signIn()}>
+    <div className="flex flex-col">
+      <p>Not signed in</p>
+      <button className="border-2 border-sky-500" onClick={() => signIn()}>
         Sign in
       </button>
-    </>
+    </div>
   );
 }

@@ -29,7 +29,7 @@ function CardList<T>({ dataKey, listTitle }: CardListProps<T>) {
   return (
     <>
       <div className="my-4">
-        <h2 className="self-start text-2xl">{listTitle}</h2>
+        <h3 className="self-start text-2xl">{listTitle}</h3>
         <ul className="max-w-full flex flex-wrap gap-4">
           {dataKey?.items.map((item: T) => (
             <li key={(item as any).id}>
@@ -57,8 +57,8 @@ function CardList<T>({ dataKey, listTitle }: CardListProps<T>) {
 function TrackList<T>({ dataKey, listTitle }: CardListProps<T>) {
   return (
     <>
-      <div className="my-4">
-        <h2 className="self-start text-2xl">{listTitle}</h2>
+      <div className="w-full flex flex-col justify-start my-4">
+        <h3 className="text-2xl">{listTitle}</h3>
         <ul className="max-w-full flex-col">
           {dataKey?.items.map((item: T) => (
             <li key={(item as any).id}>
