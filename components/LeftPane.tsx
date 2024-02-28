@@ -7,7 +7,7 @@ function handleClick(string: string) {
 export default function LeftPane() {
   return (
     <nav className="bg-background sticky top-0 left-0 min-w-full flex flex-col justify-between py-8">
-      <header className=" flex justify-start ">
+      <header className=" flex justify-center ">
         <h1>spAMPify</h1>
       </header>
       <ul className="flex flex-col justify-around">
