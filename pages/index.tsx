@@ -20,12 +20,12 @@ export default function Home() {
     data: searchResults,
     isLoading,
     error,
-  } = useSWR(debouncedQuery.length > 2 ? `/api/search?query=${debouncedQuery}` : null);
+  } = useSWR<SpotifyApi.SearchResponse>(debouncedQuery.length > 2 ? `/api/search?query=${debouncedQuery}` : null);
 
   useEffect(() => {
     const delayTimer = setTimeout(() => {
       setDebouncedQuery(searchQuery);
-    }, 300);
+    }, 500);
 
     return () => clearTimeout(delayTimer);
   }, [searchQuery]);
@@ -36,7 +36,7 @@ export default function Home() {
         <LeftPane />
 
         <main
-          className={`pt-8 px-8 ${inter.className} bg-appbackground overflow-auto w-full sticky  flex flex-col justify-center items-center`}
+          className={`pt-8 px-8 ${inter.className} bg-appbackground overflow-auto w-full sticky flex flex-col justify-center items-center`}
         >
           <input
             type="text"
@@ -48,7 +48,7 @@ export default function Home() {
               setSearchQuery(e.target.value);
             }}
           />
-
+          
           {error && <div> ERROR </div>}
 
           {searchResults && !isLoading && (
@@ -59,7 +59,7 @@ export default function Home() {
         </main>
 
         <aside className="overflow-auto sticky">
-          <MusicPlayer data={searchResults ? searchResults.tracks.items : []} />
+          <MusicPlayer data={searchResults ? searchResults.tracks?.items : []} />
         </aside>
       </div>
     </>

@@ -75,7 +75,7 @@ export default function MusicPlayer({ data }: any) {
           },
           href: "https://api.spotify.com/v1/artists/1dfeR4HaWDbWqFHLkxsg1d",
           id: "1dfeR4HaWDbWqFHLkxsg1d",
-          name: "TEST",
+          name: "TESTaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
           type: "artist",
           uri: "spotify:artist:1dfeR4HaWDbWqFHLkxsg1d",
         },
@@ -93,7 +93,7 @@ export default function MusicPlayer({ data }: any) {
       href: "https://s3.amazonaws.com/org.freecodecamp.mp3-player-project/scratching-the-surface.mp3",
       id: "TESTTTTTT11111",
       is_local: false,
-      name: "TEST",
+      name: "TESTaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
       popularity: 77,
       preview_url: null,
       track_number: 3,
@@ -158,7 +158,7 @@ export default function MusicPlayer({ data }: any) {
         <div className="flex justify-center items-center w-full  bg-background">
           <div className="h-[8px] w-[40%]  bg-highlight"></div>
 
-          <h2 className="text-secondary mx-10">SpoLittle</h2>
+          <h2 className="text-secondary mx-10">spAMP</h2>
 
           <div className="h-[8px] w-[40%] bg-highlight"></div>
         </div>
@@ -287,16 +287,16 @@ export default function MusicPlayer({ data }: any) {
 
           <div className="h-[8px] w-[40%]  bg-highlight"></div>
         </div>
-        <ul className="  h-full overflow-auto bg-foreground flex flex-col w-full justify-start list-none  ">
+        <ul className="  h-full overflow-auto bg-foreground flex flex-col w-full list-none  ">
           {playlist.map((song) => (
-            <li key={song.id} className=" outline-highlight flex  justify-between items-center p-1">
+            <li key={song.id} className=" outline-highlight  flex  justify-between items-center p-1">
               <button
-                className="w-full h-full flex items-center justify-between gap-2 focus:bg-slate-800"
+                className="w-4/5 h-full flex flex-auto items-center gap-2 focus:bg-slate-800"
                 onClick={() => playHandler(song.id || "")}
               >
-                <span className="text-sm/4">{song.name}</span>
-                <span className="text-xs/4 text-highlight text-left">{song.artists[0].name}</span>
-                <span className="text-xs ">{formatMsToMin(song.duration_ms)}</span>
+                <span className="text-sm/4 overflow-hidden whitespace-nowrap overflow-ellipsis">{song.name}</span>
+                <span className="text-xs/4 overflow-hidden whitespace-nowrap overflow-ellipsis text-highlight">{song.artists[0].name}</span>
+                <span className="text-xs text-right flex-1">{formatMsToMin(song.duration_ms)}</span>
               </button>
               <button
                 onClick={() => deleteSong(song.id || "")}

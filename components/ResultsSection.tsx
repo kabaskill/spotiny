@@ -60,22 +60,19 @@ export default function ResultsSection({ data }: SearchResultsProps) {
 function CardList<T>({ dataKey, listTitle }: CardListProps<T>) {
   return (
     <>
-      <h3 className="text-2xl">{listTitle}</h3>
-      <ul className="max-w-full flex flex-wrap gap-2">
+      <h3 >{listTitle}</h3>
+      <ul className="max-w-full h-full  gap-2 overflow-auto">
         {dataKey?.items.map((item: T) => (
           <li key={(item as any).id}>
-            <Link
-              href={(item as any).href}
-              className="flex flex-col w-[200px] border-slate-800 border-2 p-4 "
-            >
+            <Link href={(item as any).href} className="flex flex-col p-4 ">
               <Image
-                src={(item as any).images[0].url}
+                src={(item as any).images[0].url ? (item as any).images[0].url : ""}
                 alt={(item as any).name}
-                width={(item as any).images[0].width ? (item as any).images[0].width : 640}
-                height={(item as any).images[0].height ? (item as any).images[0].height : 640}
+                width={256}
+                height={256}
                 className="aspect-square object-cover"
               />
-              <p className="mt-4 truncate text-ellipsis max-w-full">{(item as any).name}</p>
+              <p className="mt-4 truncate text-ellipsis">{(item as any).name}</p>
             </Link>
           </li>
         ))}
@@ -87,7 +84,7 @@ function CardList<T>({ dataKey, listTitle }: CardListProps<T>) {
 function TrackList<T>({ dataKey, listTitle }: CardListProps<T>) {
   return (
     <>
-      <h3 className="text-2xl">{listTitle}</h3>
+      <h3 >{listTitle}</h3>
       <ul className="max-w-full flex-col">
         {dataKey?.items.map((item: T) => (
           <li key={(item as any).id}>
