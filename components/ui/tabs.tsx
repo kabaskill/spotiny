@@ -107,7 +107,7 @@ export const FadeInDiv = ({
           layoutId={tab.value}
           style={{
             scale: 1 - idx * 0.1,
-            top: idx * -50 ,       // hovering ? idx * -50 : 0
+            top: hovering ? idx * -60 : idx * -50,
             zIndex: -idx,
             opacity: idx < 3 ? 1 - idx * 0.1 : 0,
           }}

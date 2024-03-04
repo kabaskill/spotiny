@@ -1,33 +1,33 @@
-import { getSpotifyAccessToken } from "./spotifyAuth";
+import SpotifyWebApi from 'spotify-web-api-node';
 
-const SPOTIFY_API_BASE = "https://api.spotify.com/v1";
+const scopes: string = [
+  "user-read-email",
+  "playlist-read-private",
+  "playlist-read-collaborative",
+  "streaming",
+  "user-read-private",
+  "user-library-read",
+  "user-top-read",
+  "user-read-playback-state",
+  "user-modify-playback-state",
+  "user-read-currently-playing",
+  "user-read-recently-played",
+  "user-follow-read",
 
-export const searchSpotify = async (
-  query: string,
-  types: string[] = ["album", "artist", "playlist", "track", "show", "episode"]
-): Promise<any> => {
-  try {
-    const accessToken = await getSpotifyAccessToken();
+].join(',');
 
-    const typeParam = types.join(",");
-
-    const response = await fetch(
-      `${SPOTIFY_API_BASE}/search?q=${encodeURIComponent(query)}&type=${typeParam}&limit=5`,
-      {
-        headers: {
-          Authorization: `Bearer ${accessToken}`,
-        },
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to fetch Spotify API");
-    }
-
-    const data = await response.json();
-    return data;
-  } catch (error) {
-    console.error("Error searching on Spotify:", error);
-    throw error;
-  }
+const params: Record<string, any> = {
+  scope: scopes
 };
+
+const queryParamString: string = new URLSearchParams(params).toString();
+
+const LOGIN_URL = `https://accounts.spotify.com/authorize?${queryParamString}`;
+
+const spotifyApi = new SpotifyWebApi({
+  clientId: process.env.SPOTIFY_CLIENT_ID,
+  clientSecret: process.env.SPOTIFY_CLIENT_SECRET
+});
+
+export default spotifyApi;
+export { LOGIN_URL };

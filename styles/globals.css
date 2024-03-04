@@ -51,6 +51,10 @@ a {
   text-decoration: none;
 }
 
+.button{
+  background-color: white;
+}
+
 ::-webkit-scrollbar {
   width: 6px;
 }

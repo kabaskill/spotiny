@@ -65,13 +65,13 @@ function CardList<T>({ dataKey, listTitle }: CardListProps<T>) {
         {dataKey?.items.map((item: T) => (
           <li key={(item as any).id}>
             <Link href={(item as any).href} className="flex flex-col p-4 ">
-              <Image
+              {/* <Image
                 src={(item as any).images[0].url ? (item as any).images[0].url : ""}
                 alt={(item as any).name}
                 width={256}
                 height={256}
                 className="aspect-square object-cover"
-              />
+              /> */}
               <p className="mt-4 truncate text-ellipsis">{(item as any).name}</p>
             </Link>
           </li>

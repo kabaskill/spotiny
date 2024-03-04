@@ -1,26 +1,30 @@
 "use client";
-
+import { getSession, useSession } from "next-auth/react";
 import { useState, useEffect } from "react";
-import useSWR from "swr";
 import { Inter } from "next/font/google";
-import { useSession } from "next-auth/react";
 import ResultsSection from "@/components/ResultsSection";
 import MusicPlayer from "@/components/MusicPlayer";
 import LeftPane from "@/components/LeftPane";
+import UseSpotify from "@/hooks/useSpotify";
 
 const inter = Inter({ subsets: ["latin"] });
 
 export default function Home() {
   const [searchQuery, setSearchQuery] = useState("");
   const [debouncedQuery, setDebouncedQuery] = useState(searchQuery);
+  const [searchResults, setSearchResults] = useState<SpotifyApi.SearchResponse>({});
 
-  const session = useSession();
+  const [playlist, setPlaylist] = useState<Array<any>>([]);
 
-  const {
-    data: searchResults,
-    isLoading,
-    error,
-  } = useSWR<SpotifyApi.SearchResponse>(debouncedQuery.length > 2 ? `/api/search?query=${debouncedQuery}` : null);
+  const spotifyApi = UseSpotify();
+
+  useEffect(() => {
+    spotifyApi.getUserPlaylists({ limit: 50 }).then((res) => {
+      setPlaylist(res.body.items);
+    });
+
+    console.log("hele:", playlist);
+  }, []);
 
   useEffect(() => {
     const delayTimer = setTimeout(() => {
@@ -30,9 +34,20 @@ export default function Home() {
     return () => clearTimeout(delayTimer);
   }, [searchQuery]);
 
+  useEffect(() => {
+    if (debouncedQuery) {
+      spotifyApi.search(debouncedQuery, ["track", "album", "artist", "playlist"]).then((res) => {
+        setSearchResults(res.body);
+      });
+    }
+
+    console.log(searchResults);
+  }, [debouncedQuery]);
+
   return (
     <>
       <div className=" h-screen grid grid-cols-[10%_65%_25%] relative">
+        
         <LeftPane />
 
         <main
@@ -40,7 +55,7 @@ export default function Home() {
         >
           <input
             type="text"
-            className=" w-1/2 bg-slate-500"
+            className=" w-1/2 bg-slate-500 mb-8 p-2"
             name="SpotifySearch"
             placeholder="Search on Spotify"
             value={searchQuery}
@@ -48,20 +63,27 @@ export default function Home() {
               setSearchQuery(e.target.value);
             }}
           />
-          
-          {error && <div> ERROR </div>}
 
-          {searchResults && !isLoading && (
-            <>
-              <ResultsSection data={searchResults} />
-            </>
-          )}
+          <ResultsSection data={searchResults} />
+
         </main>
 
         <aside className="overflow-auto sticky">
-          <MusicPlayer data={searchResults ? searchResults.tracks?.items : []} />
+
+          <MusicPlayer tracklist={searchResults.tracks?.items} />
+
         </aside>
       </div>
     </>
   );
+}
+
+export async function getServerSideProps(context: any) {
+  const session = await getSession(context);
+
+  return {
+    props: {
+      session,
+    },
+  };
 }

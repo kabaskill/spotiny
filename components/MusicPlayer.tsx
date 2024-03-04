@@ -1,6 +1,8 @@
 import Image from "next/image";
 import { useState, useEffect } from "react";
 import { formatMsToMin } from "@/utils/formatMsToMin";
+import useSpotify from "@/hooks/useSpotify";
+import { useSession } from "next-auth/react";
 
 interface UserData {
   songs: SpotifyApi.TrackObjectFull[];
@@ -8,20 +10,7 @@ interface UserData {
   songCurrentTime?: number;
 }
 
-export default function MusicPlayer({ data }: any) {
-  const [audio, setAudio] = useState<HTMLAudioElement | null>(null);
-
-  useEffect(() => {
-    if (typeof window !== "undefined") {
-      const newAudio = new Audio();
-      setAudio(newAudio);
-
-      return () => {
-        newAudio.pause();
-      };
-    }
-  }, []);
-
+export default function MusicPlayer(tracklist: any) {
   const [playlist, setPlaylist] = useState<SpotifyApi.TrackObjectFull[]>([
     {
       album: {
@@ -75,7 +64,7 @@ export default function MusicPlayer({ data }: any) {
           },
           href: "https://api.spotify.com/v1/artists/1dfeR4HaWDbWqFHLkxsg1d",
           id: "1dfeR4HaWDbWqFHLkxsg1d",
-          name: "TESTaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+          name: "TESTaaaaaaaaaaaaaaaaaaaaaaa",
           type: "artist",
           uri: "spotify:artist:1dfeR4HaWDbWqFHLkxsg1d",
         },
@@ -100,56 +89,44 @@ export default function MusicPlayer({ data }: any) {
       type: "track",
       uri: "spotify:track:57JVGBtBLCfHw2muk5416J",
     },
-    ...data,
+    ...tracklist,
   ]);
 
   const [userData, setUserData] = useState<UserData>({
     songs: [...playlist],
   });
 
-  const playHandler = (id: string) => {
-    const song: SpotifyApi.TrackObjectFull | void = userData.songs.find((s) => s.id === id);
+  const spotifyApi = useSpotify();
+  const session = useSession();
 
-    if (!song || !audio) {
-      return;
-    }
+  const [isPlaying, setIsPlaying] = useState<boolean | null>(null);
 
-    // Pause and reset audio before setting the new source
-    audio.pause();
-    audio.currentTime = 0;
-    audio.src = song.href;
-    audio.load();
+  const [currentTrackId, setCurrentTrackId] = useState<string | null>(null);
 
-    // Set audio title
-    audio.title = song.name;
+  // const fetchCurrentPlayingState = () => {
+  //   if (!songInfo) {
+  //     spotifyApi.getMyCurrentPlayingTrack().then((data: any) => {
+  //       setCurrentTrackId(data.body?.item?.id);
 
-    // If the current song is different, or if there is no current song, set the current song
-    if (!userData.currentSong || userData.currentSong.id !== song.id) {
-      setUserData({ ...userData, currentSong: song });
-    }
+  //       spotifyApi.getMyCurrentPlaybackState().then((data: any) => {
+  //         setIsPlaying(data.body?.is_playing);
+  //       });
+  //     });
+  //   }
+  //   setUserData({ ...userData, currentSong: songInfo });
+  // };
 
-    // Play the audio if it's paused
-    if (audio.paused) {
-      audio
-        .play()
-        .then(() => {
-          console.log("Audio playback started successfully");
-        })
-        .catch((error) => {
-          console.error("Error starting audio playback:", error);
-        });
-    }
+  const handlePlayPause = () => {
+    spotifyApi.getMyCurrentPlaybackState().then(async (data: any) => {
+      if (data.body.is_playing) {
+        await spotifyApi.pause();
+        setIsPlaying(false);
+      } else {
+        await spotifyApi.play();
+        setIsPlaying(true);
+      }
+    });
   };
-
-  const pauseHandler = () => {
-    audio?.pause;
-  };
-
-  const prevSongHandler = () => {};
-
-  const nextSongHandler = () => {};
-
-  const deleteSong = (str: string) => {};
 
   return (
     <div className=" h-full flex flex-col gap-1 ">
@@ -186,7 +163,7 @@ export default function MusicPlayer({ data }: any) {
                 id="previous"
                 className="previous bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
                 aria-label="Previous"
-                onClick={prevSongHandler}
+                // onClick={prevSongHandler}
               >
                 <svg
                   className="fill-primary"
@@ -204,42 +181,43 @@ export default function MusicPlayer({ data }: any) {
                 id="play"
                 className="play bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
                 aria-label="Play"
-                onClick={() => playHandler(userData.currentSong?.id || "")}
+                onClick={handlePlayPause}
               >
-                <svg
-                  className="fill-primary"
-                  width="17"
-                  height="19"
-                  viewBox="0 0 17 19"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M0 0L16.1852 9.5L1.88952e-07 19L0 0Z" />
-                </svg>
+                {!isPlaying ? (
+                  <>
+                    <svg
+                      className="fill-primary"
+                      width="17"
+                      height="19"
+                      viewBox="0 0 17 19"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M0 0L16.1852 9.5L1.88952e-07 19L0 0Z" />
+                    </svg>
+                  </>
+                ) : (
+                  <>
+                    <svg
+                      className="fill-primary"
+                      width="17"
+                      height="19"
+                      viewBox="0 0 17 19"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path d="M0 6.54013e-07H4.75V19H0V6.54013e-07Z" />
+                      <path d="M11.4 0H16.15V19H11.4V0Z" />
+                    </svg>
+                  </>
+                )}
               </button>
-              <button
-                id="pause"
-                className="pause"
-                aria-label="Pause"
-                onClick={() => pauseHandler()}
-              >
-                <svg
-                  className="fill-primary"
-                  width="17"
-                  height="19"
-                  viewBox="0 0 17 19"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                >
-                  <path d="M0 6.54013e-07H4.75V19H0V6.54013e-07Z" />
-                  <path d="M11.4 0H16.15V19H11.4V0Z" />
-                </svg>
-              </button>
+
               <button
                 id="next"
                 className="next bg-transparent border-none bg-primary cursor-pointer text-base outline-highlight text-center focus:outline-dashed focus:outline-2"
                 aria-label="Next"
-                onClick={nextSongHandler}
+                // onClick={nextSongHandler}
               >
                 <svg
                   className="fill-primary"
@@ -289,17 +267,24 @@ export default function MusicPlayer({ data }: any) {
         </div>
         <ul className="  h-full overflow-auto bg-foreground flex flex-col w-full list-none  ">
           {playlist.map((song) => (
-            <li key={song.id} className=" outline-highlight  flex  justify-between items-center p-1">
+            <li
+              key={song.id}
+              className=" outline-highlight  flex  justify-between items-center p-1"
+            >
               <button
                 className="w-4/5 h-full flex flex-auto items-center gap-2 focus:bg-slate-800"
-                onClick={() => playHandler(song.id || "")}
+                // onClick={() => playHandler(song.id || "")}
               >
-                <span className="text-sm/4 overflow-hidden whitespace-nowrap overflow-ellipsis">{song.name}</span>
-                <span className="text-xs/4 overflow-hidden whitespace-nowrap overflow-ellipsis text-highlight">{song.artists[0].name}</span>
+                <span className="text-sm/4 overflow-hidden whitespace-nowrap overflow-ellipsis">
+                  {song.name}
+                </span>
+                <span className="text-xs/4 overflow-hidden whitespace-nowrap overflow-ellipsis text-highlight">
+                  {song.artists[0].name}
+                </span>
                 <span className="text-xs text-right flex-1">{formatMsToMin(song.duration_ms)}</span>
               </button>
               <button
-                onClick={() => deleteSong(song.id || "")}
+                // onClick={() => deleteSong(song.id || "")}
                 className="playlist-song-delete"
                 aria-label="Delete ${song.title}"
               >

@@ -6,7 +6,7 @@ export default function Component() {
   if (session.status === "authenticated") {
     return (
       <div className="flex flex-col">
-        <p className="text-center">Signed in as {session.data?.user?.email}</p>
+        <p className="text-center">Signed in as {session.data?.user?.name}</p>
         <button className="border-2 border-sky-500" onClick={() => signOut()}>
           Sign out
         </button>

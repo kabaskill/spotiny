@@ -16,6 +16,6 @@
       "@/*": ["./*"]
     }
   },
-  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx"],
+  "include": ["next-env.d.ts", "**/*.ts", "**/*.tsx", "components/WebPlayback.tsx", "pages/api/spotify.js", "pages/api/auth/[...nextauth].ts", "lib/spotify.ts", "components/Plaayyaa.jsx", "pages/playa.jsx"],
   "exclude": ["node_modules"]
 }
